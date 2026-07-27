@@ -97,7 +97,8 @@ class PDFEngine {
 
     final bytes = await pdf.save();
 
-    final archivo = File('${HistorialService.carpetaPatrones}/$fileName');
+    final carpeta = await HistorialService.carpetaPatrones();
+    final archivo = File('${carpeta.path}/$fileName').absolute;
     await archivo.parent.create(recursive: true);
     await archivo.writeAsBytes(bytes);
 

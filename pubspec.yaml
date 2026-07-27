@@ -48,6 +48,9 @@ dependencies:
   # Abrir archivos generados (PDF) con la app del sistema
   open_filex: ^4.7.0
 
+  # Carpeta de documentos para guardar PDFs fuera de Windows
+  path_provider: ^2.1.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
