@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:pdf/pdf.dart';
@@ -47,12 +48,14 @@ class PDFEngine {
   final Map<String, PatternPoint> patternPoints;
   final String garmentName;
   final Medidas medidas;
+  final String variante;
 
   const PDFEngine({
     required this.a4Pages,
     required this.patternPoints,
     required this.garmentName,
     required this.medidas,
+    this.variante = '',
   });
 
   String get fileName => 'Patron_${_asciiSafe(garmentName)}_Escala_1_1.pdf';
@@ -92,19 +95,27 @@ class PDFEngine {
       );
     }
 
-    // BLOQUE DEL HISTORIAL
     final bytes = await pdf.save();
 
-    final registro = {
-      "filePath": fileName,
-      "prenda": garmentName,
-      "variante": garmentName,
-      "fecha": DateTime.now().toIso8601String(),
-    };
+    final carpeta = await HistorialService.carpetaPatrones();
+    final archivo = File('${carpeta.path}/$fileName').absolute;
+    await archivo.parent.create(recursive: true);
+    await archivo.writeAsBytes(bytes);
 
-    await HistorialService().agregarRegistro(registro);
+    await HistorialService().agregarRegistro({
+      'filePath': archivo.path,
+      'prenda': garmentName,
+      'variante': variante,
+      'fecha': _fechaRegistro(DateTime.now()),
+    });
 
     return bytes;
+  }
+
+  static String _fechaRegistro(DateTime fecha) {
+    String dosDigitos(int valor) => valor.toString().padLeft(2, '0');
+    return '${fecha.year}-${dosDigitos(fecha.month)}-${dosDigitos(fecha.day)} '
+        '${dosDigitos(fecha.hour)}:${dosDigitos(fecha.minute)}';
   }
 }
 

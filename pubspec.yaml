@@ -45,6 +45,12 @@ dependencies:
   shared_preferences: ^2.2.2
   image_picker: ^1.2.3
 
+  # Abrir archivos generados (PDF) con la app del sistema
+  open_filex: ^4.7.0
+
+  # Carpeta de documentos para guardar PDFs fuera de Windows
+  path_provider: ^2.1.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
