@@ -2,37 +2,38 @@ import 'dart:convert';
 import 'dart:io';
 
 class HistorialService {
-  final String _path = 'historial.json';
+  static const String carpetaPatrones =
+      r'C:/flutter_projects/patronaje_app/patrones_PDF';
+  static const String nombreArchivo = 'historial.json';
+
+  File get _archivo => File('$carpetaPatrones/$nombreArchivo');
 
   Future<void> agregarRegistro(Map<String, dynamic> registro) async {
-    final file = File(_path);
+    final historial = await cargarHistorial();
+    historial.insert(0, registro);
 
-    List<dynamic> historial = [];
-
-    if (await file.exists()) {
-      final contenido = await file.readAsString();
-      if (contenido.trim().isNotEmpty) {
-        historial = jsonDecode(contenido);
-      }
-    }
-
-    historial.add(registro);
-
-    await file.writeAsString(jsonEncode(historial), mode: FileMode.write);
+    final archivo = _archivo;
+    await archivo.parent.create(recursive: true);
+    await archivo.writeAsString(jsonEncode(historial));
   }
 
-  Future<List<dynamic>> cargarHistorial() async {
-    final file = File(_path);
+  Future<List<Map<String, dynamic>>> cargarHistorial() async {
+    final archivo = _archivo;
+    if (!await archivo.exists()) return <Map<String, dynamic>>[];
 
-    if (!await file.exists()) {
-      return [];
+    try {
+      final contenido = await archivo.readAsString();
+      if (contenido.trim().isEmpty) return <Map<String, dynamic>>[];
+
+      final decodificado = jsonDecode(contenido);
+      if (decodificado is! List) return <Map<String, dynamic>>[];
+
+      return decodificado
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+    } on FormatException {
+      return <Map<String, dynamic>>[];
     }
-
-    final contenido = await file.readAsString();
-    if (contenido.trim().isEmpty) {
-      return [];
-    }
-
-    return jsonDecode(contenido);
   }
 }

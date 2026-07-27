@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'elegir_prenda_screen.dart';
 import '../models/medidas.dart';
 import 'guardar_medidas_screen.dart';
+import 'historial_screen.dart';
 import 'seleccionar_perfil_screen.dart';
 
 class MedidasScreen extends StatefulWidget {
@@ -276,6 +277,14 @@ class _MedidasScreenState extends State<MedidasScreen> {
     );
   }
 
+  // Navegar a la pantalla con el historial de patrones generados
+  void _verHistorial() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const HistorialScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -393,6 +402,19 @@ class _MedidasScreenState extends State<MedidasScreen> {
                 label: const Text('Cargar medidas'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // Botón para ver el historial de patrones generados
+              ElevatedButton.icon(
+                onPressed: _verHistorial,
+                icon: const Icon(Icons.history),
+                label: const Text('Historial de patrones'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
                   foregroundColor: Colors.white,
                 ),
               ),
